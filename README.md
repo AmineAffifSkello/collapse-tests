@@ -11,16 +11,34 @@ Uncheck it and every `.test` file in the diff folds away. Check it again and the
 
 ## Install, 30 seconds
 
-1. Unzip `collapse-tests.zip` somewhere you will keep it. Chrome reads the folder every
-   time it starts, so do not unzip it into Downloads and then empty Downloads.
-2. Open `chrome://extensions`
-3. Turn on **Developer mode**, top right
-4. Click **Load unpacked** and pick the unzipped `collapse-tests` folder
-5. Reload your pull request tab
+```bash
+git clone https://github.com/AmineAffifSkello/collapse-tests.git
+```
+
+Clone it somewhere you will keep. Chrome reads that folder every time it starts, so a
+throwaway directory means a broken extension the day you clean it up.
+
+1. Open `chrome://extensions`
+2. Turn on **Developer mode**, top right
+3. Click **Load unpacked** and pick the `collapse-tests` folder you just cloned
+4. Reload your pull request tab
+
+No git? Hit **Code** then **Download ZIP** at the top of this page, unzip it somewhere
+permanent, and start from step 1.
 
 Chrome will show a "Disable developer mode extensions" prompt on some launches. That is
 Chrome's standard warning for any extension not installed from the Web Store, not a
 warning about this one.
+
+## Update it
+
+```bash
+git pull
+```
+
+Then click the reload icon on the Collapse Tests card in `chrome://extensions`. Chrome
+never auto-updates an extension loaded this way, so nothing changes until you do those
+two things.
 
 ## Use it
 
