@@ -2,6 +2,8 @@
 
 > **One click folds the tests. One click brings them back.**
 
+<img width="1511" height="905" alt="wrap-tests" src="https://github.com/user-attachments/assets/29ae47e4-d406-47bb-b97f-182313d972a1" />
+
 A Chrome extension for GitHub pull requests. It adds a **Tests** item to the "File filter"
 menu, right next to `.md` and `.ts`, with the same checkmark.
 
