@@ -1,0 +1,261 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>bench</title><link rel="icon" href="data:,"></head>
+<body>
+
+<div role="none" data-component="ActionMenu.Overlay">
+  <ul class="prc-ActionList-ActionList-rPFF2" role="menu" data-component="ActionList">
+    <li class="prc-ActionList-Group-lMIPQ" data-component="ActionList.Group" role="none">
+      <div class="prc-ActionList-GroupHeadingWrap-laXcX"><span id="_r_3rq_">File extensions</span></div>
+      <ul aria-label="File extensions" role="group" class="prc-ActionList-GroupList-V5B3-">
+        <li tabindex="0" aria-labelledby="_r_3rr_--label _r_3rr_--trailing-visual" aria-checked="true" role="menuitemcheckbox" id="_r_3rr_" data-component="ActionList.Item" class="prc-ActionList-ActionListItem-So4vC" aria-keyshortcuts=".">
+          <div class="prc-ActionList-ActionListContent-KBb8-" data-size="medium">
+            <span class="prc-ActionList-Spacer-4tR2m"></span>
+            <span class="prc-ActionList-LeadingAction-hbWbh" data-component="ActionList.Selection">
+              <svg data-component="Octicon" class="octicon octicon-check prc-ActionList-SingleSelectCheckmark-zMd8d" viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22Z"></path></svg>
+            </span>
+            <span class="prc-ActionList-ActionListSubContent-gKsFp">
+              <span id="_r_3rr_--label" class="prc-ActionList-ItemLabel-81ohH rgh-seen-8795818556" data-component="ActionList.Item.Label">.md</span>
+              <span class="prc-ActionList-TrailingVisual-jwT9C" data-component="ActionList.TrailingVisual" id="_r_3rr_--trailing-visual">
+                <span aria-hidden="true" data-component="CounterLabel" class="prc-CounterLabel-CounterLabel-X-kRU">3</span><span class="prc-VisuallyHidden-VisuallyHidden-Q0qSB">&nbsp;(3)</span>
+              </span>
+            </span>
+          </div>
+        </li>
+        <li tabindex="-1" aria-labelledby="_r_3rs_--label _r_3rs_--trailing-visual" aria-checked="true" role="menuitemcheckbox" id="_r_3rs_" data-component="ActionList.Item" class="prc-ActionList-ActionListItem-So4vC" aria-keyshortcuts=".">
+          <div class="prc-ActionList-ActionListContent-KBb8-" data-size="medium">
+            <span class="prc-ActionList-Spacer-4tR2m"></span>
+            <span class="prc-ActionList-LeadingAction-hbWbh" data-component="ActionList.Selection">
+              <svg data-component="Octicon" class="octicon octicon-check prc-ActionList-SingleSelectCheckmark-zMd8d" viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22Z"></path></svg>
+            </span>
+            <span class="prc-ActionList-ActionListSubContent-gKsFp">
+              <span id="_r_3rs_--label" class="prc-ActionList-ItemLabel-81ohH" data-component="ActionList.Item.Label">.ts</span>
+              <span class="prc-ActionList-TrailingVisual-jwT9C" data-component="ActionList.TrailingVisual" id="_r_3rs_--trailing-visual">
+                <span aria-hidden="true" data-component="CounterLabel" class="prc-CounterLabel-CounterLabel-X-kRU">8</span><span class="prc-VisuallyHidden-VisuallyHidden-Q0qSB">&nbsp;(8)</span>
+              </span>
+            </span>
+          </div>
+        </li>
+      </ul>
+    </li>
+    <li class="prc-ActionList-Divider-taVfb" aria-hidden="true"></li>
+    <li class="prc-ActionList-Group-lMIPQ" data-component="ActionList.Group" role="none">
+      <ul aria-label="More" role="group" class="prc-ActionList-GroupList-V5B3-">
+        <li tabindex="-1" aria-labelledby="_r_3ru_--label" aria-checked="true" role="menuitemcheckbox" id="_r_3ru_" data-component="ActionList.Item" class="prc-ActionList-ActionListItem-So4vC" aria-keyshortcuts="v">
+          <div class="prc-ActionList-ActionListContent-KBb8-" data-size="medium">
+            <span class="prc-ActionList-Spacer-4tR2m"></span>
+            <span class="prc-ActionList-LeadingAction-hbWbh" data-component="ActionList.Selection">
+              <svg data-component="Octicon" class="octicon octicon-check prc-ActionList-SingleSelectCheckmark-zMd8d" viewBox="0 0 16 16" width="16" height="16"><path d="M13.78 4.22Z"></path></svg>
+            </span>
+            <span class="prc-ActionList-ActionListSubContent-gKsFp">
+              <span id="_r_3ru_--label" class="prc-ActionList-ItemLabel-81ohH" data-component="ActionList.Item.Label">Viewed files</span>
+            </span>
+          </div>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<div id="difflist"></div>
+<pre id="results"></pre>
+
+<script>
+window.clickLog = {};
+
+function makeDiff(id, path) {
+  const wrap = document.createElement('div');
+  wrap.className = 'PullRequestDiffsList-module__diffEntry__djnVa';
+  wrap.innerHTML =
+    '<div role="region" id="diff-' + id + '" class="Diff-module__diff__rx9XH">' +
+      '<div class="Diff-module__diffHeaderWrapper__UgUyv">' +
+        '<div class="DiffFileHeader-module__diff-file-header__UuNN4">' +
+          '<div class="d-flex flex-shrink-0">' +
+            '<button data-component="IconButton" type="button" class="prc-Button-IconButton-fyge7" data-collapse="1">' +
+              '<svg data-component="Octicon" class="octicon octicon-chevron-down" viewBox="0 0 16 16" width="16" height="16"><path d="M12.78 5.22Z"></path></svg>' +
+            '</button>' +
+          '</div>' +
+          '<a class="mx-1"><svg class="octicon octicon-shield-lock"></svg></a>' +
+          '<div class="DiffFileHeader-module__file-path-section__ZcmB1">' +
+            '<h3 class="DiffFileHeader-module__file-name__VVXpg"><a class="Link--primary" href="#x"><code>' + path + '</code></a></h3>' +
+            '<button type="button" class="prc-Button-IconButton-fyge7"><svg class="octicon octicon-copy"></svg></button>' +
+            '<button type="button" class="js-expand-all-difflines-button"><svg class="octicon octicon-unfold"></svg></button>' +
+          '</div>' +
+          '<div class="d-flex flex-items-center gap-2">' +
+            '<button type="button" aria-pressed="false" aria-label="Not Viewed"><span>Viewed</span></button>' +
+            '<button type="button"><svg class="octicon octicon-kebab-horizontal"></svg></button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="body"><table><tbody><tr><td>' +
+        '<button class="Button--iconOnly" aria-label="Expand file up from line 93"><svg class="octicon octicon-fold-up"></svg></button>' +
+        '<button class="Button--iconOnly" aria-label="Expand file down"><svg class="octicon octicon-fold-down"></svg></button>' +
+      '</td></tr></tbody></table></div>' +
+    '</div>';
+
+  const btn = wrap.querySelector('button[data-collapse]');
+  const body = wrap.querySelector('.body');
+  window.clickLog[path] = 0;
+  btn.addEventListener('click', () => {
+    window.clickLog[path]++;
+    const svg = btn.querySelector('svg');
+    const collapsed = svg.classList.contains('octicon-chevron-right');
+    svg.classList.toggle('octicon-chevron-right', !collapsed);
+    svg.classList.toggle('octicon-chevron-down', collapsed);
+    body.style.display = collapsed ? '' : 'none';
+  });
+  return wrap;
+}
+
+const list = document.getElementById('difflist');
+list.appendChild(makeDiff('a1', 'src/Manager/ReportManager.test.ts'));
+list.appendChild(makeDiff('a2', 'src/Repository/ReportRepository.ts'));
+list.appendChild(makeDiff('a3', 'src/Controller/ExportController.test.ts'));
+list.appendChild(makeDiff('a5', 'test/helpers/setup.ts'));
+list.appendChild(makeDiff('a6', 'src/Billing.spec.ts'));
+list.appendChild(makeDiff('a7', 'src/latest/Contest.ts'));
+window.__MENU_HTML__ = document.querySelector('[data-component="ActionMenu.Overlay"]').outerHTML;
+</script>
+
+<script src="/content.js"></script>
+
+<script>
+const out = [];
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
+const item = () => document.getElementById('tem-tests-filter');
+const state = (path) => {
+  const h = [...document.querySelectorAll('div[role="region"][id^="diff-"]')]
+    .find(r => (r.querySelector('h3 a code') || {}).textContent === path);
+  if (!h) return 'ABSENT';
+  const b = h.querySelector('button[data-collapse]');
+  return b.querySelector('svg.octicon-chevron-down') ? 'expanded' : 'collapsed';
+};
+const check = (name, actual, expected) => {
+  out.push((String(actual) === String(expected) ? 'PASS' : 'FAIL') + ' | ' + name + ' | attendu=' + expected + ' obtenu=' + actual);
+};
+
+const A = 'src/Manager/ReportManager.test.ts';
+const B = 'src/Repository/ReportRepository.ts';
+const C = 'src/Controller/ExportController.test.ts';
+const D = 'src/Jobs/SyncJob.test.ts';
+
+(async () => {
+  await wait(500);
+
+  check('item injecte', !!item(), true);
+  check('item dans le groupe More', item() && item().parentElement.getAttribute('aria-label'), 'More');
+  check('libelle', item() && item().querySelector('[data-component="ActionList.Item.Label"]').textContent, 'Tests');
+  check('coche par defaut', item() && item().getAttribute('aria-checked'), 'true');
+  check('checkmark visible', item() && item().querySelector('[data-component="ActionList.Selection"] svg').style.display, 'inline-block');
+  check('compteur initial', item() && item().querySelector('[data-component="CounterLabel"]').textContent, '2');
+  check('pas de doublon d id dans le document', document.querySelectorAll('#tem-tests-filter').length, 1);
+  check('ids du modele nettoyes', document.querySelectorAll('[id="_r_3rr_--label"]').length, 1);
+  check('raccourci clavier retire', item() && item().hasAttribute('aria-keyshortcuts'), false);
+  check('aucun repli au demarrage', state(A) + '/' + state(B) + '/' + state(C), 'expanded/expanded/expanded');
+
+  // regression: le script ne doit pas reecrire le menu a chaque tick (auto-rearmement du MutationObserver)
+  let menuMutations = 0;
+  const menuEl = document.querySelector('ul[role="menu"]');
+  const mo = new MutationObserver((recs) => { menuMutations += recs.length; });
+  mo.observe(menuEl, { childList: true, subtree: true, attributes: true, characterData: true });
+  await wait(1500);
+  mo.disconnect();
+  check('aucune mutation parasite du menu au repos', menuMutations, 0);
+
+  // repli manuel d un fichier de test alors que le filtre est coche: ne doit pas etre force
+  document.querySelectorAll('button[data-collapse]')[0].click();
+  await wait(900);
+  check('repli manuel respecte quand coche', state(A), 'collapsed');
+  document.querySelectorAll('button[data-collapse]')[0].click();
+  await wait(400);
+
+  // decoche
+  item().click();
+  await wait(900);
+  check('decoche apres clic', item().getAttribute('aria-checked'), 'false');
+  check('checkmark masquee', item().querySelector('[data-component="ActionList.Selection"] svg').style.display, 'none');
+  check('test A replie', state(A), 'collapsed');
+  check('test C replie', state(C), 'collapsed');
+  check('non-test B intact', state(B), 'expanded');
+  check('etat persiste', localStorage.getItem('collapse-tests:acme/widget-service/42'), '0');
+
+  // fichier arrive plus tard (scroll / lazy load)
+  document.getElementById('difflist').appendChild(makeDiff('a4', D));
+  await wait(1200);
+  check('nouveau fichier de test replie', state(D), 'collapsed');
+  check('compteur mis a jour', item().querySelector('[data-component="CounterLabel"]').textContent, '3');
+
+  // le menu est detruit puis recree a chaque ouverture (React)
+  document.querySelector('[data-component="ActionMenu.Overlay"]').remove();
+  check('item disparu avec le menu', !!item(), false);
+  document.body.insertAdjacentHTML('afterbegin', window.__MENU_HTML__);
+  await wait(900);
+  check('item reinjecte apres re-rendu du menu', !!item(), true);
+  check('etat decoche conserve apres re-rendu', item() && item().getAttribute('aria-checked'), 'false');
+  check('un seul item apres re-rendu', document.querySelectorAll('#tem-tests-filter').length, 1);
+
+  // recoche
+  item().click();
+  await wait(1200);
+  check('recoche', item().getAttribute('aria-checked'), 'true');
+  check('test A redeplie', state(A), 'expanded');
+  check('test C redeplie', state(C), 'expanded');
+  check('test D redeplie', state(D), 'expanded');
+  check('non-test B toujours intact', state(B), 'expanded');
+  check('cle localStorage nettoyee', localStorage.getItem('collapse-tests:acme/widget-service/42'), 'null');
+
+  // faux positifs
+  check('dossier test/ non replie', state('test/helpers/setup.ts'), 'expanded');
+  check('.spec non replie', state('src/Billing.spec.ts'), 'expanded');
+  check('Contest.ts non replie', state('src/latest/Contest.ts'), 'expanded');
+  check('aucun clic sur les faux positifs',
+    window.clickLog['test/helpers/setup.ts'] + window.clickLog['src/Billing.spec.ts'] + window.clickLog['src/latest/Contest.ts'], 0);
+
+  // stabilite: pas de boucle de clics
+  await wait(2500);
+  check('etat stable apres repos', state(A) + '/' + state(C) + '/' + state(D), 'expanded/expanded/expanded');
+  const maxClicks = Math.max(...Object.values(window.clickLog));
+  check('pas de boucle de clic (max par fichier <= 6)', maxClicks <= 6, true);
+  out.push('INFO | clics par fichier: ' + JSON.stringify(window.clickLog));
+  out.push('INFO | jamais clique sur B: ' + (window.clickLog[B] === 0));
+
+  // storage bloque (navigation privee, cookies tiers coupes)
+  const realSet = Storage.prototype.setItem;
+  const realGet = Storage.prototype.getItem;
+  Storage.prototype.setItem = function () { throw new DOMException('blocked', 'SecurityError'); };
+  Storage.prototype.getItem = function () { throw new DOMException('blocked', 'SecurityError'); };
+  let threw = false;
+  try { item().click(); await wait(1200); } catch (e) { threw = true; }
+  check('storage bloque: pas d exception', threw, false);
+  check('storage bloque: le filtre replie quand meme', state(A), 'collapsed');
+  Storage.prototype.setItem = realSet;
+  Storage.prototype.getItem = realGet;
+  item().click();
+  await wait(1200);
+
+  // perf sur un gros diff
+  const list2 = document.getElementById('difflist');
+  for (let i = 0; i < 300; i++) {
+    list2.appendChild(makeDiff('p' + i, 'src/gen/File' + i + (i % 3 === 0 ? '.test' : '') + '.ts'));
+  }
+  await wait(2000);
+  check('gros diff: compteur', item().querySelector('[data-component="CounterLabel"]').textContent, '103');
+  const t0 = performance.now();
+  const ROUNDS = 20;
+  for (let k = 0; k < ROUNDS; k++) {
+    for (const r of document.querySelectorAll('div[role="region"][id^="diff-"]')) {
+      const n = r.querySelector('h3 a code') || r.querySelector('h3 a');
+      const path = n ? n.textContent.trim() : '';
+      if (!path || !path.toLowerCase().includes('.test')) continue;
+      r.querySelector('button:has(> svg.octicon-chevron-down), button:has(> svg.octicon-chevron-right)');
+    }
+  }
+  const perTick = (performance.now() - t0) / ROUNDS;
+  out.push('INFO | cout d un scan sur 303 fichiers: ' + perTick.toFixed(2) + ' ms');
+  check('scan sous 16 ms (une frame)', perTick < 16, true);
+
+  const payload = 'BEGIN\n' + out.join('\n') + '\nEND';
+  document.getElementById('results').textContent = payload;
+  window.__RESULTS__ = payload;
+})();
+</script>
+</body></html>

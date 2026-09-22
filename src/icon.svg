@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <clipPath id="tube">
+      <path d="M44 28 V80 A20 20 0 0 0 84 80 V28 Z"/>
+    </clipPath>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="#0D1117"/>
+  <rect x="1" y="1" width="126" height="126" rx="27" fill="none" stroke="#30363D" stroke-width="2"/>
+  <g clip-path="url(#tube)">
+    <rect x="34" y="62" width="60" height="48" fill="#3FB950"/>
+  </g>
+  <path d="M36 28 H92 M44 28 V80 A20 20 0 0 0 84 80 V28"
+        fill="none" stroke="#E6EDF3" stroke-width="9"
+        stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
