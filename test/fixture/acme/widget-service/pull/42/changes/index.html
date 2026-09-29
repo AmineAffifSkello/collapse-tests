@@ -2,6 +2,7 @@
 <html><head><meta charset="utf-8"><title>bench</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/content.css">
 <style>
   #filetree .ActionList-item-label { color: rgb(240, 246, 252) !important; }
+  #filetree a { cursor: pointer !important; }
   #filetree [role="treeitem"] { display: block; height: 24px; }
 </style></head>
 <body>
@@ -68,6 +69,7 @@
 <pre id="results"></pre>
 
 <script>
+try { localStorage.removeItem('collapse-tests:acme/widget-service/42'); } catch (e) {}
 window.clickLog = {};
 window.navLog = 0;
 window.folderLog = 0;
@@ -236,6 +238,12 @@ const D = 'src/Jobs/SyncJob.test.ts';
     getComputedStyle(labelA).color !== 'rgb(240, 246, 252)', true);
   check('la couleur est bien posee en inline important',
     labelA.style.getPropertyPriority('color'), 'important');
+  check('le curseur passe a not-allowed malgre un !important de la page',
+    getComputedStyle(treeRow(A).querySelector('a')).cursor, 'not-allowed');
+  check('curseur inchange sur un non-test',
+    getComputedStyle(treeRow(B).querySelector('a')).cursor, 'pointer');
+  check('en-tete de diff: curseur not-allowed',
+    getComputedStyle(diffHeader(A).querySelector('button[data-collapse]')).cursor, 'not-allowed');
 
   check('en-tete de diff: test A grise', headerMuted(A), true);
   check('en-tete de diff: test C grise', headerMuted(C), true);
@@ -315,6 +323,7 @@ const D = 'src/Jobs/SyncJob.test.ts';
   check('arborescence: plus rien de grise apres recoche', document.querySelectorAll('.collapse-tests-muted').length, 0);
   check('arborescence: aria-disabled retire', treeRow(A).hasAttribute('aria-disabled'), false);
   check('la couleur inline est retiree', treeRow(A).querySelector('.ActionList-item-label').style.color, '');
+  check('le curseur inline est retire', getComputedStyle(treeRow(A).querySelector('a')).cursor, 'pointer');
   check('en-tete de diff: plus grise apres recoche', headerMuted(A), false);
   harnessClick(diffHeader(A).querySelector('button[data-collapse]'));
   check('chevron redevenu actif apres recoche', state(A), 'collapsed');
@@ -353,7 +362,7 @@ const D = 'src/Jobs/SyncJob.test.ts';
   check('storage bloque: le filtre replie quand meme', state(A), 'collapsed');
   Storage.prototype.setItem = realSet;
   Storage.prototype.getItem = realGet;
-  item().click();
+  localStorage.removeItem('collapse-tests:acme/widget-service/42');
   await wait(1200);
 
   // perf sur un gros diff
@@ -376,6 +385,9 @@ const D = 'src/Jobs/SyncJob.test.ts';
   const perTick = (performance.now() - t0) / ROUNDS;
   out.push('INFO | cout d un scan sur 303 fichiers: ' + perTick.toFixed(2) + ' ms');
   check('scan sous 50 ms', perTick < 50, true);
+
+  check('le banc se termine sur un etat propre',
+    localStorage.getItem('collapse-tests:acme/widget-service/42'), 'null');
 
   const payload = 'BEGIN\n' + out.join('\n') + '\nEND';
   document.getElementById('results').textContent = payload;

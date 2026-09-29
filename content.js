@@ -66,6 +66,7 @@
     for (const el of selfAndChildren(row)) {
       if (el.style.getPropertyValue('color')) continue;
       el.style.setProperty('color', GREY, 'important');
+      el.style.setProperty('cursor', 'not-allowed', 'important');
       el.dataset.ctGrey = '1';
     }
   };
@@ -76,6 +77,7 @@
     for (const el of selfAndChildren(row)) {
       if (!el.dataset.ctGrey) continue;
       el.style.removeProperty('color');
+      el.style.removeProperty('cursor');
       delete el.dataset.ctGrey;
     }
   };

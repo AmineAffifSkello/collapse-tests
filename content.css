@@ -1,5 +1,5 @@
 .collapse-tests-muted,
 .collapse-tests-muted * {
-  cursor: default;
+  cursor: not-allowed;
   text-decoration: none;
 }
