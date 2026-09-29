@@ -101,7 +101,8 @@ It prints exactly which part of the page stopped matching.
 | Filter checked | the script forces nothing, otherwise it would reopen files you folded by hand |
 | Filter unchecked | folding is applied continuously, for files that load later |
 | File tree rows | matched through their `#diff-<sha>` anchor, which is also the diff region's `id`, so no dependency on tree classes |
-| Greying out | a `collapse-tests-muted` class plus `aria-disabled`, with a capture listener blocking click and Enter. Nothing GitHub owns is mutated beyond that class |
+| Greying out | an inline `color` with `important`, so it wins over GitHub's own `!important` on the label, plus a `collapse-tests-muted` class and `aria-disabled` |
+| Blocking the click | a capture listener on pointer, mouse and Enter/Space events. Not `pointer-events: none`, which makes the row transparent to hit testing and hands the click to the parent folder |
 | Storage | `localStorage`, key `collapse-tests:<owner>/<repo>/<pr>` |
 
 The `matches` is `https://github.com/*` and not `.../pull/*` on purpose: Chrome does not
@@ -114,7 +115,7 @@ to a pull request. The script exits immediately when the URL is not a diff page.
 ./test/run.sh
 ```
 
-55 assertions, no npm dependency. The bench replays real GitHub markup for a
+61 assertions, no npm dependency. The bench replays real GitHub markup for a
 `/pull/42/changes` page served on the right URL path, then drives headless Chrome over
 CDP. It covers injection, folding and unfolding, files loaded after the fact, React
 re-rendering the menu, false positives (`test/`, `.spec`, `Contest.ts`), blocked

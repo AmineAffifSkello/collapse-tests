@@ -1,8 +1,5 @@
-.collapse-tests-muted {
-  pointer-events: none;
-}
-
 .collapse-tests-muted,
 .collapse-tests-muted * {
-  color: var(--fgColor-muted, #656d76) !important;
+  cursor: default;
+  text-decoration: none;
 }

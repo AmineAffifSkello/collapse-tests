@@ -1,5 +1,9 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><title>bench</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/content.css"></head>
+<html><head><meta charset="utf-8"><title>bench</title><link rel="icon" href="data:,"><link rel="stylesheet" href="/content.css">
+<style>
+  #filetree .ActionList-item-label { color: rgb(240, 246, 252) !important; }
+  #filetree [role="treeitem"] { display: block; height: 24px; }
+</style></head>
 <body>
 
 <div role="none" data-component="ActionMenu.Overlay">
@@ -66,6 +70,8 @@
 <script>
 window.clickLog = {};
 window.navLog = 0;
+window.folderLog = 0;
+document.addEventListener('DOMContentLoaded', () => {});
 
 function makeDiff(id, path) {
   const wrap = document.createElement('div');
@@ -124,6 +130,7 @@ function makeDiff(id, path) {
   return wrap;
 }
 
+document.getElementById('filetree').addEventListener('click', () => { window.folderLog++; });
 const list = document.getElementById('difflist');
 list.appendChild(makeDiff('a1', 'src/Manager/ReportManager.test.ts'));
 list.appendChild(makeDiff('a2', 'src/Repository/ReportRepository.ts'));
@@ -205,10 +212,25 @@ const D = 'src/Jobs/SyncJob.test.ts';
   check('arborescence: test C grise', treeMuted(C), true);
   check('arborescence: non-test B intact', treeMuted(B), false);
   check('arborescence: aria-disabled pose', treeRow(A).getAttribute('aria-disabled'), 'true');
-  check('css: pointer-events coupes', getComputedStyle(treeRow(A)).pointerEvents, 'none');
-  check('css: couleur du libelle grisee',
-    getComputedStyle(treeRow(A).querySelector('.ActionList-item-label')).color
-      !== getComputedStyle(treeRow(B).querySelector('.ActionList-item-label')).color, true);
+  const labelA = treeRow(A).querySelector('.ActionList-item-label');
+  const labelB = treeRow(B).querySelector('.ActionList-item-label');
+  check('le texte est grise malgre un !important de la page',
+    getComputedStyle(labelA).color !== getComputedStyle(labelB).color, true);
+  check('le texte n a pas garde la couleur imposee par la page',
+    getComputedStyle(labelA).color !== 'rgb(240, 246, 252)', true);
+  check('la couleur est bien posee en inline important',
+    labelA.style.getPropertyPriority('color'), 'important');
+
+  const box = treeRow(A).getBoundingClientRect();
+  const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+  check('la ligne grisee reste la cible du pointeur (pas de clic traversant)',
+    !!hit && !!hit.closest('.collapse-tests-muted'), true);
+
+  const folderBefore = window.folderLog;
+  treeRow(A).querySelector('a').click();
+  check('le clic ne remonte pas au conteneur parent', window.folderLog, folderBefore);
+  treeRow(A).dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+  check('mousedown bloque aussi', window.folderLog, folderBefore);
   check('le lien du titre de fichier n est pas pris pour une ligne d arbre',
     document.querySelector('#diff-a1 h3 a').closest('.collapse-tests-muted'), null);
 
@@ -256,6 +278,8 @@ const D = 'src/Jobs/SyncJob.test.ts';
   check('non-test B toujours intact', state(B), 'expanded');
   check('arborescence: plus rien de grise apres recoche', document.querySelectorAll('.collapse-tests-muted').length, 0);
   check('arborescence: aria-disabled retire', treeRow(A).hasAttribute('aria-disabled'), false);
+  check('la couleur inline est retiree', treeRow(A).querySelector('.ActionList-item-label').style.color, '');
+  check('le marqueur interne est retire', document.querySelectorAll('[data-ct-grey]').length, 0);
   const navAfter = window.navLog;
   treeRow(A).querySelector('a').click();
   check('clic redevenu actif sur un test', window.navLog, navAfter + 1);

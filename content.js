@@ -56,29 +56,51 @@
     return rows;
   };
 
-  const paintTree = (muted) => {
-    if (!muted) {
-      for (const row of document.querySelectorAll('.' + MUTED)) {
-        row.classList.remove(MUTED);
-        row.removeAttribute('aria-disabled');
-      }
-      return;
-    }
-    for (const entry of treeEntries()) {
-      const want = isTestFile(entry.path);
-      if (want === entry.row.classList.contains(MUTED)) continue;
-      entry.row.classList.toggle(MUTED, want);
-      if (want) entry.row.setAttribute('aria-disabled', 'true');
-      else entry.row.removeAttribute('aria-disabled');
+  const GREY = 'var(--fgColor-muted, #656d76)';
+  const selfAndChildren = (el) => [el, ...el.querySelectorAll('*')];
+
+  const muteRow = (row) => {
+    if (row.classList.contains(MUTED)) return;
+    row.classList.add(MUTED);
+    row.setAttribute('aria-disabled', 'true');
+    for (const el of selfAndChildren(row)) {
+      if (el.style.getPropertyValue('color')) continue;
+      el.style.setProperty('color', GREY, 'important');
+      el.dataset.ctGrey = '1';
     }
   };
 
+  const unmuteRow = (row) => {
+    row.classList.remove(MUTED);
+    row.removeAttribute('aria-disabled');
+    for (const el of selfAndChildren(row)) {
+      if (!el.dataset.ctGrey) continue;
+      el.style.removeProperty('color');
+      delete el.dataset.ctGrey;
+    }
+  };
+
+  const paintTree = (muted) => {
+    if (!muted) {
+      for (const row of document.querySelectorAll('.' + MUTED)) unmuteRow(row);
+      return;
+    }
+    for (const entry of treeEntries()) {
+      if (isTestFile(entry.path)) muteRow(entry.row);
+      else if (entry.row.classList.contains(MUTED)) unmuteRow(entry.row);
+    }
+  };
+
+  const BLOCKED = ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'auxclick', 'dblclick'];
+  const KEYS = ['keydown', 'keyup', 'keypress'];
+
   const blockMuted = (event) => {
     if (!(event.target instanceof Element)) return;
-    if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+    if (KEYS.includes(event.type) && event.key !== 'Enter' && event.key !== ' ') return;
     if (!event.target.closest('.' + MUTED)) return;
     event.preventDefault();
     event.stopPropagation();
+    if (event.stopImmediatePropagation) event.stopImmediatePropagation();
   };
 
   const scanTestFiles = () => {
@@ -254,8 +276,9 @@
     if (!maxWaitTimer) maxWaitTimer = setTimeout(run, MAX_WAIT_MS);
   };
 
-  document.addEventListener('click', blockMuted, true);
-  document.addEventListener('keydown', blockMuted, true);
+  for (const type of [...BLOCKED, ...KEYS]) {
+    document.addEventListener(type, blockMuted, true);
+  }
 
   new MutationObserver(() => {
     if (isDiffPage()) schedule();
