@@ -51,6 +51,7 @@ sits at the bottom, checked by default.
 | Check **Tests** | They unfold |
 | Scroll further down the PR | Files loading in fold too, as long as **Tests** is unchecked |
 | Come back to the PR later | Your choice is remembered, per pull request |
+| Look at the file tree on the left | Test files are greyed out and no longer clickable while **Tests** is unchecked |
 
 The counter next to **Tests** shows how many test files are in the diff.
 
@@ -99,6 +100,8 @@ It prints exactly which part of the page stopped matching.
 | Finding the button | `button:has(> svg.octicon-chevron-down)`, scoped to the region |
 | Filter checked | the script forces nothing, otherwise it would reopen files you folded by hand |
 | Filter unchecked | folding is applied continuously, for files that load later |
+| File tree rows | matched through their `#diff-<sha>` anchor, which is also the diff region's `id`, so no dependency on tree classes |
+| Greying out | a `collapse-tests-muted` class plus `aria-disabled`, with a capture listener blocking click and Enter. Nothing GitHub owns is mutated beyond that class |
 | Storage | `localStorage`, key `collapse-tests:<owner>/<repo>/<pr>` |
 
 The `matches` is `https://github.com/*` and not `.../pull/*` on purpose: Chrome does not
@@ -111,7 +114,7 @@ to a pull request. The script exits immediately when the URL is not a diff page.
 ./test/run.sh
 ```
 
-40 assertions, no npm dependency. The bench replays real GitHub markup for a
+55 assertions, no npm dependency. The bench replays real GitHub markup for a
 `/pull/42/changes` page served on the right URL path, then drives headless Chrome over
 CDP. It covers injection, folding and unfolding, files loaded after the fact, React
 re-rendering the menu, false positives (`test/`, `.spec`, `Contest.ts`), blocked

@@ -38,6 +38,49 @@
 
   const isTestFile = (p) => p.toLowerCase().includes('.test');
 
+  const MUTED = 'collapse-tests-muted';
+
+  const treeEntries = () => {
+    const rows = [];
+    for (const link of document.querySelectorAll('a[href*="#diff-"]')) {
+      if (link.closest('div[role="region"][id^="diff-"]')) continue;
+      const href = link.getAttribute('href');
+      const anchorId = href.slice(href.indexOf('#diff-') + 1);
+      const region = document.getElementById(anchorId);
+      const named = region && (region.querySelector('h3 a code') || region.querySelector('h3 a'));
+      rows.push({
+        row: link.closest('[role="treeitem"]') || link,
+        path: named ? named.textContent.trim() : link.textContent.trim(),
+      });
+    }
+    return rows;
+  };
+
+  const paintTree = (muted) => {
+    if (!muted) {
+      for (const row of document.querySelectorAll('.' + MUTED)) {
+        row.classList.remove(MUTED);
+        row.removeAttribute('aria-disabled');
+      }
+      return;
+    }
+    for (const entry of treeEntries()) {
+      const want = isTestFile(entry.path);
+      if (want === entry.row.classList.contains(MUTED)) continue;
+      entry.row.classList.toggle(MUTED, want);
+      if (want) entry.row.setAttribute('aria-disabled', 'true');
+      else entry.row.removeAttribute('aria-disabled');
+    }
+  };
+
+  const blockMuted = (event) => {
+    if (!(event.target instanceof Element)) return;
+    if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') return;
+    if (!event.target.closest('.' + MUTED)) return;
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
   const scanTestFiles = () => {
     const found = [];
     for (const region of document.querySelectorAll('div[role="region"][id^="diff-"]')) {
@@ -148,6 +191,7 @@
       const files = scanTestFiles();
       for (const file of files) if (file.btn) lastClick.delete(file.btn);
       const remaining = setTestFiles(next, files);
+      paintTree(!next);
       expandPending = next && remaining > 0;
       schedule();
     };
@@ -184,8 +228,10 @@
     if (!testsShown()) {
       expandPending = false;
       setTestFiles(false, files);
+      paintTree(true);
       return;
     }
+    paintTree(false);
     if (!expandPending) return;
     expandPending = setTestFiles(true, files) > 0;
     if (expandPending) schedule();
@@ -207,6 +253,9 @@
     debounceTimer = setTimeout(run, DEBOUNCE_MS);
     if (!maxWaitTimer) maxWaitTimer = setTimeout(run, MAX_WAIT_MS);
   };
+
+  document.addEventListener('click', blockMuted, true);
+  document.addEventListener('keydown', blockMuted, true);
 
   new MutationObserver(() => {
     if (isDiffPage()) schedule();

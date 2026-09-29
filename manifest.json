@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Collapse Tests",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Ajoute un filtre Tests dans le menu des filtres de fichiers d'une PR GitHub. Decoche pour replier tous les fichiers .test du diff.",
   "content_scripts": [
     {
@@ -12,7 +12,10 @@
         "content.js"
       ],
       "run_at": "document_idle",
-      "all_frames": false
+      "all_frames": false,
+      "css": [
+        "content.css"
+      ]
     }
   ],
   "icons": {

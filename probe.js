@@ -35,6 +35,17 @@
   out.boutonReplierHTML = btn ? btn.outerHTML.slice(0, 400) : null;
   out.etatPremierFichier = btn ? (btn.querySelector('svg.octicon-chevron-down') ? 'deplie' : 'replie') : null;
 
+  const treeLinks = [...document.querySelectorAll('a[href*="#diff-"]')]
+    .filter(a => !a.closest('div[role="region"][id^="diff-"]'));
+  out.arbre_nbLiensVersDiff = treeLinks.length;
+  out.arbre_exempleLien = treeLinks[0] ? {
+    href: treeLinks[0].getAttribute('href'),
+    texte: treeLinks[0].textContent.trim().slice(0, 60),
+    ligneTrouvee: !!treeLinks[0].closest('[role="treeitem"]'),
+    ligneHTML: (treeLinks[0].closest('[role="treeitem"]') || treeLinks[0]).outerHTML.replace(/\s+/g, ' ').slice(0, 500),
+  } : 'AUCUN LIEN: l arborescence n utilise pas d ancre #diff-';
+  out.arbre_roleTree = [...document.querySelectorAll('[role="tree"]')].map(t => t.getAttribute('aria-label'));
+
   out.totalAnnonceParGitHub = document.body.innerText.match(/(\d+)\s+changed files?/)?.[0] || 'inconnu';
 
   console.log(JSON.stringify(out, null, 2));

@@ -11,12 +11,13 @@ PROFILE="$(mktemp -d)"
 CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 
 cp "$ROOT/content.js" "$HERE/fixture/content.js"
+cp "$ROOT/content.css" "$HERE/fixture/content.css"
 
 cleanup() {
   { [[ -n "${SERVER_PID:-}" ]] && kill "$SERVER_PID"; } 2>/dev/null || true
   { [[ -n "${CHROME_PID:-}" ]] && kill "$CHROME_PID"; } 2>/dev/null || true
   sleep 1
-  rm -rf "$PROFILE" "$HERE/fixture/content.js" 2>/dev/null || true
+  rm -rf "$PROFILE" "$HERE/fixture/content.js" "$HERE/fixture/content.css" 2>/dev/null || true
 }
 trap cleanup EXIT
 
