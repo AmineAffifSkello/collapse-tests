@@ -80,7 +80,12 @@
     }
   };
 
-  const paintTree = (muted) => {
+  const headerOf = (region) =>
+    region.querySelector('[data-diff-header-wrapper="true"]') ||
+    region.querySelector('[class*="diffHeaderWrapper"]') ||
+    region.firstElementChild;
+
+  const paintMuted = (muted, files) => {
     if (!muted) {
       for (const row of document.querySelectorAll('.' + MUTED)) unmuteRow(row);
       return;
@@ -89,12 +94,17 @@
       if (isTestFile(entry.path)) muteRow(entry.row);
       else if (entry.row.classList.contains(MUTED)) unmuteRow(entry.row);
     }
+    for (const file of files) {
+      const header = file.region && headerOf(file.region);
+      if (header) muteRow(header);
+    }
   };
 
   const BLOCKED = ['pointerdown', 'pointerup', 'mousedown', 'mouseup', 'click', 'auxclick', 'dblclick'];
   const KEYS = ['keydown', 'keyup', 'keypress'];
 
   const blockMuted = (event) => {
+    if (selfClick) return;
     if (!(event.target instanceof Element)) return;
     if (KEYS.includes(event.type) && event.key !== 'Enter' && event.key !== ' ') return;
     if (!event.target.closest('.' + MUTED)) return;
@@ -112,10 +122,12 @@
       const btn = region.querySelector(
         'button:has(> svg.octicon-chevron-down), button:has(> svg.octicon-chevron-right)'
       );
-      found.push({ path, btn, expanded: !!(btn && btn.querySelector('svg.octicon-chevron-down')) });
+      found.push({ path, btn, region, expanded: !!(btn && btn.querySelector('svg.octicon-chevron-down')) });
     }
     return found;
   };
+
+  let selfClick = false;
 
   const lastClick = new WeakMap();
   const attempts = new Map();
@@ -136,7 +148,8 @@
       if (now - (lastClick.get(file.btn) || 0) < CLICK_COOLDOWN_MS) continue;
       lastClick.set(file.btn, now);
       attempts.set(file.path, { want: wantExpanded, n: tried + 1 });
-      file.btn.click();
+      selfClick = true;
+      try { file.btn.click(); } finally { selfClick = false; }
     }
     return remaining;
   };
@@ -212,8 +225,8 @@
       attempts.clear();
       const files = scanTestFiles();
       for (const file of files) if (file.btn) lastClick.delete(file.btn);
+      paintMuted(!next, files);
       const remaining = setTestFiles(next, files);
-      paintTree(!next);
       expandPending = next && remaining > 0;
       schedule();
     };
@@ -250,10 +263,10 @@
     if (!testsShown()) {
       expandPending = false;
       setTestFiles(false, files);
-      paintTree(true);
+      paintMuted(true, files);
       return;
     }
-    paintTree(false);
+    paintMuted(false, files);
     if (!expandPending) return;
     expandPending = setTestFiles(true, files) > 0;
     if (expandPending) schedule();

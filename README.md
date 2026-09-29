@@ -52,6 +52,7 @@ sits at the bottom, checked by default.
 | Scroll further down the PR | Files loading in fold too, as long as **Tests** is unchecked |
 | Come back to the PR later | Your choice is remembered, per pull request |
 | Look at the file tree on the left | Test files are greyed out and no longer clickable while **Tests** is unchecked |
+| Look at a folded test file in the diff list | Its header is greyed out too, and inert. Check **Tests** again to get it back |
 
 The counter next to **Tests** shows how many test files are in the diff.
 
@@ -101,6 +102,7 @@ It prints exactly which part of the page stopped matching.
 | Filter checked | the script forces nothing, otherwise it would reopen files you folded by hand |
 | Filter unchecked | folding is applied continuously, for files that load later |
 | File tree rows | matched through their `#diff-<sha>` anchor, which is also the diff region's `id`, so no dependency on tree classes |
+| Diff file headers | matched through `[data-diff-header-wrapper]` inside the region. The extension's own collapse clicks bypass the blocker through an internal flag, otherwise re-checking could never unfold anything |
 | Greying out | an inline `color` with `important`, so it wins over GitHub's own `!important` on the label, plus a `collapse-tests-muted` class and `aria-disabled` |
 | Blocking the click | a capture listener on pointer, mouse and Enter/Space events. Not `pointer-events: none`, which makes the row transparent to hit testing and hands the click to the parent folder |
 | Storage | `localStorage`, key `collapse-tests:<owner>/<repo>/<pr>` |
@@ -115,7 +117,7 @@ to a pull request. The script exits immediately when the URL is not a diff page.
 ./test/run.sh
 ```
 
-61 assertions, no npm dependency. The bench replays real GitHub markup for a
+71 assertions, no npm dependency. The bench replays real GitHub markup for a
 `/pull/42/changes` page served on the right URL path, then drives headless Chrome over
 CDP. It covers injection, folding and unfolding, files loaded after the fact, React
 re-rendering the menu, false positives (`test/`, `.spec`, `Contest.ts`), blocked

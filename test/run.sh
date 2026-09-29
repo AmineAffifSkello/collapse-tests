@@ -29,4 +29,13 @@ SERVER_PID=$!
 CHROME_PID=$!
 
 sleep 4
-node "$HERE/drive.mjs"
+if ! node "$HERE/drive.mjs"; then
+  echo
+  echo "Chrome n'a pas ouvert son port de debug (certains environnements l'interdisent)."
+  echo "Repli manuel, le banc tourne dans n'importe quel navigateur :"
+  echo "  cp content.js content.css test/fixture/"
+  echo "  (cd test/fixture && python3 -m http.server 8765)"
+  echo "  ouvrir http://localhost:8765/acme/widget-service/pull/42/changes/"
+  echo "  les resultats s'affichent dans la page et dans window.__RESULTS__"
+  exit 1
+fi
