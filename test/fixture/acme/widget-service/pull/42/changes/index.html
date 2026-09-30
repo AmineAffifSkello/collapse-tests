@@ -194,7 +194,7 @@ const D = 'src/Jobs/SyncJob.test.ts';
   check('libelle', item() && item().querySelector('[data-component="ActionList.Item.Label"]').textContent, 'Tests');
   check('coche par defaut', item() && item().getAttribute('aria-checked'), 'true');
   check('checkmark visible', item() && item().querySelector('[data-component="ActionList.Selection"] svg').style.display, 'inline-block');
-  check('compteur initial', item() && item().querySelector('[data-component="CounterLabel"]').textContent, '2');
+  check('compteur initial', item() && item().querySelector('[data-component="CounterLabel"]').textContent, '4');
   check('pas de doublon d id dans le document', document.querySelectorAll('#tem-tests-filter').length, 1);
   check('ids du modele nettoyes', document.querySelectorAll('[id="_r_3rr_--label"]').length, 1);
   check('raccourci clavier retire', item() && item().hasAttribute('aria-keyshortcuts'), false);
@@ -301,7 +301,7 @@ const D = 'src/Jobs/SyncJob.test.ts';
   document.getElementById('difflist').appendChild(makeDiff('a4', D));
   await wait(1200);
   check('nouveau fichier de test replie', state(D), 'collapsed');
-  check('compteur mis a jour', item().querySelector('[data-component="CounterLabel"]').textContent, '3');
+  check('compteur mis a jour', item().querySelector('[data-component="CounterLabel"]').textContent, '5');
 
   // le menu est detruit puis recree a chaque ouverture (React)
   document.querySelector('[data-component="ActionMenu.Overlay"]').remove();
@@ -337,11 +337,10 @@ const D = 'src/Jobs/SyncJob.test.ts';
   check('cle localStorage nettoyee', localStorage.getItem('collapse-tests:acme/widget-service/42'), 'null');
 
   // faux positifs
-  check('dossier test/ non replie', state('test/helpers/setup.ts'), 'expanded');
-  check('.spec non replie', state('src/Billing.spec.ts'), 'expanded');
-  check('Contest.ts non replie', state('src/latest/Contest.ts'), 'expanded');
-  check('aucun clic sur les faux positifs',
-    window.clickLog['test/helpers/setup.ts'] + window.clickLog['src/Billing.spec.ts'] + window.clickLog['src/latest/Contest.ts'], 0);
+  check('dossier test/ traite comme du test', window.clickLog['test/helpers/setup.ts'] > 0, true);
+  check('.spec traite comme du test', window.clickLog['src/Billing.spec.ts'] > 0, true);
+  check('Contest.ts jamais touche', window.clickLog['src/latest/Contest.ts'], 0);
+  check('Contest.ts reste deplie', state('src/latest/Contest.ts'), 'expanded');
 
   // stabilite: pas de boucle de clics
   await wait(2500);
@@ -365,13 +364,61 @@ const D = 'src/Jobs/SyncJob.test.ts';
   localStorage.removeItem('collapse-tests:acme/widget-service/42');
   await wait(1200);
 
+  // couverture multi-langage
+  const LANG_CASES = [
+    ['src/app.e2e-spec.ts', true],
+    ['src/Login.cy.ts', true],
+    ['pkg/server_test.go', true],
+    ['app/models/user_spec.rb', true],
+    ['app/models/user_test.rb', true],
+    ['tests/test_parser.py', true],
+    ['tests/conftest.py', true],
+    ['src/test/java/com/acme/UserTest.java', true],
+    ['src/main/kotlin/PaymentSpec.kt', true],
+    ['Sources/AppTests/LoginTests.swift', true],
+    ['src/Billing/InvoiceTest.php', true],
+    ['lib/parser_test.exs', true],
+    ['rust/tests/integration.rs', true],
+    ['features/checkout.feature', true],
+    ['spec/factories/users.rb', true],
+    ['cypress/support/commands.js', true],
+    ['__tests__/helpers.js', true],
+    ['src/testUtils.ts', true],
+    ['infra/main.tftest.hcl', true],
+    ['api/UserServiceIT.java', true],
+    ['src/Protest.vue', false],
+    ['src/greatest.py', false],
+    ['src/attestation/Manifest.java', false],
+    ['vitest.config.ts', false],
+    ['src/testimonials/List.tsx', false],
+    ['jest.config.js', false],
+    ['docs/architecture.md', false],
+    ['src/components/Button.tsx', false],
+  ];
+  const langList = document.getElementById('difflist');
+  LANG_CASES.forEach(([chemin], i) => langList.appendChild(makeDiff('lang' + i, chemin)));
+  await wait(1200);
+  item().click();
+  await wait(3000);
+  const ecarts = LANG_CASES
+    .filter(([chemin, attendu]) => (state(chemin) === 'collapsed') !== attendu)
+    .map(([chemin, attendu]) => chemin + (attendu ? ' aurait du etre replie' : ' n aurait pas du etre replie'));
+  check('detection sur ' + LANG_CASES.length + ' conventions de langage',
+    ecarts.join(' | ') || 'aucun ecart', 'aucun ecart');
+  item().click();
+  await wait(2500);
+  check('tout est redeplie apres la phase multi-langage',
+    LANG_CASES.filter(([chemin]) => state(chemin) === 'collapsed').length, 0);
+
   // perf sur un gros diff
   const list2 = document.getElementById('difflist');
+  const compteurAvant = Number(item().querySelector('[data-component="CounterLabel"]').textContent);
   for (let i = 0; i < 300; i++) {
     list2.appendChild(makeDiff('p' + i, 'src/gen/File' + i + (i % 3 === 0 ? '.test' : '') + '.ts'));
   }
   await wait(2000);
-  check('gros diff: compteur', item().querySelector('[data-component="CounterLabel"]').textContent, '103');
+  check('gros diff: compteur augmente de 100',
+    Number(item().querySelector('[data-component="CounterLabel"]').textContent), compteurAvant + 100);
   const t0 = performance.now();
   const ROUNDS = 20;
   for (let k = 0; k < ROUNDS; k++) {

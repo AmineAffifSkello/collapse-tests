@@ -56,6 +56,29 @@ sits at the bottom, checked by default.
 
 The counter next to **Tests** shows how many test files are in the diff.
 
+## What counts as a test
+
+Language agnostic. A file is a test when its **name** matches a known convention:
+
+| Convention | Catches |
+|---|---|
+| `.test.` `.spec.` `_test.` `_spec.` `-test.` `-spec.` | `Report.test.ts`, `PlanningRow.spec.js`, `server_test.go`, `user_spec.rb`, `app.e2e-spec.ts` |
+| `test_` `spec_` at the start | `test_parser.py`, `spec_helper.rb` |
+| `Test` `Tests` `Spec` `Specs` `IT` in CamelCase before the extension | `UserTest.java`, `LoginTests.swift`, `PaymentSpec.kt`, `UserServiceIT.java` |
+| `testSomething` | `testUtils.ts` |
+| `.cy.` `.e2e.` `.feature` `conftest.py` `.tftest.hcl` | Cypress, Cucumber, pytest, Terraform |
+
+Or when a **directory** in its path is `test`, `tests`, `spec`, `specs`, `__tests__`, `__test__`,
+`e2e` or `cypress`. That covers fixtures and helpers with no telltale name, such as
+`spec/factories/users.rb` or `rust/tests/integration.rs`.
+
+Word boundaries are respected, so `latest.ts`, `Contest.ts`, `Protest.vue`, `greatest.py`,
+`testimonials/List.tsx` and `vitest.config.ts` are left alone. A plain substring search on
+"test" would have caught every one of them.
+
+The one known overreach: a `spec/` directory used for specifications rather than tests, such
+as `docs/spec/openapi.yaml`, is treated as a test. Open an issue if that bites.
+
 ## Why it exists
 
 GitHub already lets you filter files in a pull request. It just cannot do this one thing.
@@ -117,7 +140,7 @@ to a pull request. The script exits immediately when the URL is not a diff page.
 ./test/run.sh
 ```
 
-76 assertions, no npm dependency. The bench replays real GitHub markup for a
+78 assertions, no npm dependency. The bench replays real GitHub markup for a
 `/pull/42/changes` page served on the right URL path, then drives headless Chrome over
 CDP. It covers injection, folding and unfolding, files loaded after the fact, React
 re-rendering the menu, false positives (`test/`, `.spec`, `Contest.ts`), blocked

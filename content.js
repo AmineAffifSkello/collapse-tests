@@ -36,7 +36,30 @@
 
   /* ---------- lecture du diff ---------- */
 
-  const isTestFile = (p) => p.toLowerCase().includes('.test');
+  const TEST_DIRS = new Set([
+    'test', 'tests', '__test__', '__tests__',
+    'spec', 'specs', '__spec__', '__specs__',
+    'e2e', 'cypress',
+  ]);
+
+  const TEST_NAMES = [
+    /(^|[._-])(tests?|specs?)[._-]/i,
+    /(^|[._-])(tests?|specs?)$/i,
+    /^tests?[A-Z]/,
+    /[a-z0-9](Tests?|Specs?)\.[A-Za-z0-9]+$/,
+    /[a-z0-9]IT\.(java|kt|kts|groovy|scala)$/,
+    /\.(cy|e2e)\.[A-Za-z0-9]+$/i,
+    /^conftest\.py$/i,
+    /\.tftest\.hcl$/i,
+    /\.feature$/i,
+  ];
+
+  const isTestFile = (path) => {
+    const parts = path.split('/');
+    const name = parts.pop() || '';
+    if (parts.some((dir) => TEST_DIRS.has(dir.toLowerCase()))) return true;
+    return TEST_NAMES.some((re) => re.test(name));
+  };
 
   const MUTED = 'collapse-tests-muted';
 
